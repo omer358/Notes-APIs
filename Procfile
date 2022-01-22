@@ -1,1 +1,1 @@
-web: gunicorn Notes.Notes.wsgi
+web: python Notes/manage.py runserver 0.0.0.0:$PORT
