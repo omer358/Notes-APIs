@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
@@ -50,7 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 
-class Logout(APIView):
+class Logout(GenericAPIView):
     def get(self, request, format=None):
         # simply delete the token to force a login
         request.user.auth_token.delete()
