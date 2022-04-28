@@ -40,8 +40,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Notes APIs',
-    'DESCRIPTION': 'APIs for note app',
+    'TITLE': 'Notes App',
+    'DESCRIPTION': 'This is a simple serverside for a note app written in Django.',
     'VERSION': '1.0.0',
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
