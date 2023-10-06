@@ -1,15 +1,12 @@
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
-from rest_framework.serializers import Serializer
-from rest_framework.views import APIView
 import logging
+
+from django.contrib.auth.models import User
+from rest_framework import viewsets, permissions, authentication, generics
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import Notes
 from .serializers import NotesSerializer, UserSerializer, UserRegisterSerializer
-from rest_framework import viewsets, permissions, authentication, status, generics
 
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
 
@@ -30,9 +27,7 @@ class NotesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         note = request.data
         logging.info(request.auth)
-        token = Token.objects.get(key=str(request.auth))
-        logging.debug('the passed token belong to: ' + str(token.user))
-        new_note = Notes.objects.create(title=note['title'], content=note['content'], user=token.user)
+        new_note = Notes.objects.create(title=note['title'], content=note['content'])
         new_note.save()
         serializer = NotesSerializer(new_note)
         logging.debug(msg="The new added note: " + str(serializer.data))
@@ -40,8 +35,7 @@ class NotesViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def delete_all(self, request):
-        token = Token.objects.get(key=str(request.auth))
-        user_notes = Notes.objects.all().filter(user=token.user).delete()
+        user_notes = Notes.objects.all().delete()
         return Response(data={'response': 'successfully deleted '})
 
 
@@ -52,11 +46,11 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 
-class Logout(GenericAPIView):
-    def get(self, request, format=None):
-        # simply delete the token to force a login
-        request.user.auth_token.delete()
-        return Response(data={'response': 'successfully log out '}, status=status.HTTP_200_OK)
+# class Logout(GenericAPIView):
+#     def get(self, request, format=None):
+#         # simply delete the token to force a login
+#         request.user.auth_token.delete()
+#         return Response(data={'response': 'successfully log out '}, status=status.HTTP_200_OK)
 
 
 class Register(generics.GenericAPIView):
@@ -66,8 +60,6 @@ class Register(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token = Token.objects.create(user=user)
         return Response({
             "username": user.username,
-            "token": token.key
         })

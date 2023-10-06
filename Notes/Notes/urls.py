@@ -15,20 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-import logging
+from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from myapp import views
-from myapp.views import Logout, Register
-
-logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
+from myapp.views import Register
 
 router = routers.SimpleRouter()
 router.register(r'notes', views.NotesViewSet)
 router.register(r'users', views.UserViewSet)
-logging.debug('routers are: ' + str(router.urls))
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
@@ -36,8 +35,8 @@ urlpatterns += [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('docs', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
-    path('logout/', Logout.as_view(), name='logout'),
     path('register/', Register.as_view(), name='register'),
 ]
