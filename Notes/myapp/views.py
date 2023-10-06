@@ -29,6 +29,7 @@ class NotesViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         note = request.data
+        logging.info(request.auth)
         token = Token.objects.get(key=str(request.auth))
         logging.debug('the passed token belong to: ' + str(token.user))
         new_note = Notes.objects.create(title=note['title'], content=note['content'], user=token.user)
