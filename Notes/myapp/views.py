@@ -26,8 +26,12 @@ class NotesViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         note = request.data
-        logging.info(request.auth)
-        new_note = Notes.objects.create(title=note['title'], content=note['content'])
+        user = User.objects.get(username="omer358")
+        logging.info(user)
+        new_note = Notes.objects.create(
+            title=note['title'],
+            content=note['content'],
+            user=user)
         new_note.save()
         serializer = NotesSerializer(new_note)
         logging.debug(msg="The new added note: " + str(serializer.data))
