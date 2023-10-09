@@ -14,20 +14,17 @@ logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - 
 class NotesViewSet(viewsets.ModelViewSet):
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permissionNs_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        user = request.user
-        logging.debug(msg="the current user is: " + str(user))
+        user = User.objects.get(username=request.user)
         queryset = Notes.objects.all().filter(user=user.id)
         serializer_class = NotesSerializer(queryset, many=True)
         return Response(data=serializer_class.data)
 
     def create(self, request, *args, **kwargs):
         note = request.data
-        user = User.objects.get(username="omer358")
-        logging.info(user)
+        user = User.objects.get(username=request.user)
         new_note = Notes.objects.create(
             title=note['title'],
             content=note['content'],
