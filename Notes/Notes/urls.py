@@ -39,4 +39,5 @@ urlpatterns += [
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
     path('register', Register.as_view(), name='register'),
+    path("ping", views.ping)
 ]

@@ -2,13 +2,19 @@ import logging
 
 from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions, authentication, generics
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from .models import Notes
 from .serializers import NotesSerializer, UserSerializer, UserRegisterSerializer
 
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
+
+
+@api_view(['GET'])
+def ping(request):
+    msg = {"msg": "Hello world"}
+    return Response(msg)
 
 
 class NotesViewSet(viewsets.ModelViewSet):
