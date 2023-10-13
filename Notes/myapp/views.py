@@ -23,6 +23,7 @@ class NotesViewSet(viewsets.ModelViewSet):
     permissionNs_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
+        logging.info(request.user)
         user = User.objects.get(username=request.user)
         queryset = Notes.objects.all().filter(user=user.id)
         serializer_class = NotesSerializer(queryset, many=True)
@@ -37,7 +38,6 @@ class NotesViewSet(viewsets.ModelViewSet):
             user=user)
         new_note.save()
         serializer = NotesSerializer(new_note)
-        logging.debug(msg="The new added note: " + str(serializer.data))
         return Response(serializer.data)
 
     @action(detail=False, methods=['post'])
