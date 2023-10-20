@@ -14,3 +14,4 @@ class Notes(models.Model):
 
     class Meta:
         verbose_name_plural = "Notes"
+        ordering = ["-created_date"]
