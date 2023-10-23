@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions, authentication, generics
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Notes
 from .serializers import NotesSerializer, UserSerializer, UserRegisterSerializer
@@ -53,13 +54,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
 
 
-# class Logout(GenericAPIView):
-#     def get(self, request, format=None):
-#         # simply delete the token to force a login
-#         request.user.auth_token.delete()
-#         return Response(data={'response': 'successfully log out '}, status=status.HTTP_200_OK)
-
-
 class Register(generics.GenericAPIView):
     serializer_class = UserRegisterSerializer
 
@@ -67,6 +61,6 @@ class Register(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response({
-            "username": user.username,
-        })
+        refresh = RefreshToken.for_user(user)
+        tokens = {'refresh': str(refresh), 'access': str(refresh.access_token), }
+        return Response(tokens)
